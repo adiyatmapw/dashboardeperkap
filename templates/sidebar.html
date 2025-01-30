@@ -1,0 +1,150 @@
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(-250px); /* Sidebar mulai dari luar layar */
+    }
+    to {
+        transform: translateX(0); /* Sidebar ke posisi semula */
+    }
+}
+
+.sidebar {
+            height: 100vh;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            z-index: 1;
+            transition: all 0.3s ease-in-out;
+            animation: slideIn 0.5s ease-in-out;
+            /* color: rgb(0, 0, 0); */
+        }
+
+.sidebar .logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px; /* Tinggi logo area */
+    margin-top: 50px;
+    margin-bottom: 50px;
+        }
+.sidebar .logo img {
+        max-width: 80%;
+        }
+
+.sidebar .nav-link {
+    color: #000;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 10px 15px;
+    border-radius: 50px; /* Membentuk kapsul */
+    transition: all 0.3s ease;
+        }
+
+.sidebar .nav-link:hover {
+    background-color: #5D9CEC;
+    color: #fff;
+    transform: scale(1.05); /* Efek zoom sederhana */
+        }
+.sidebar .nav-link.active {
+    background-color: #5D9CEC; /* Warna biru untuk link aktif */
+    color: white;
+        }
+.sidebar .logout-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 10%;
+    width: 80%;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+        }
+
+.sidebar .logout-btn:hover {
+    background-color: #eb0119;
+    color: white;
+    transform: scale(1.05);
+        }
+
+
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar">
+                <h3 class="text-center"><b>Dashboard</b></h3>
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/logoperusahaan.png') }}" alt="Logo Perusahaan" class="img-fluid">
+                </div>
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('home') %}active {% elif request.path == url_for('homeadmin') %}active {% endif %}" href="{{ url_for('home') }}">Beranda</a>
+                    </li>
+                    {% if roles in [
+                        'Bidang Ketentraman dan Ketertiban Umum', 
+                        'Bidang Pengawasan dan Pengendalian Tempat Usaha', 
+                        'Bidang Perlindungan Masyarakat', 
+                        'Bidang Penegakan Perdan dan Perkada', 
+                        'Bidang PPNS',
+                        'Subbag Peralatan dan Perlengkapan'    
+                    ] %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('bidang') %}active {% elif request.path == url_for('bidangrequest') %}active {% endif %}" href="{{ url_for('bidang') }}">Bidang</a>
+                    </li>
+                    {% endif %}
+
+                    {% if roles in [
+                        'Subbagian Umum', 
+                        'Subbagian Program, Pelaporan, dan Keuangan', 
+                        'Subkelompok Kepegawaian',
+                        'Subbag Peralatan dan Perlengkapan' 
+                    ] %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('sekretariat') %}active {% elif request.path == url_for('sekretariatrequest') %}active {% endif %}" href="{{ url_for('sekretariat') }}">Sekretariat</a>
+                    </li>
+                    {% endif %}
+                    {% if roles != 'Subbag Peralatan dan Perlengkapan' %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('hubungiperkap') %}active {% endif %}" href="{{ url_for('hubungiperkap') }}">Hubungi Perkap</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('pesan') %}active{% endif %}" href="{{ url_for('pesan') }}">Pesan</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == url_for('stok_barang') %}active{% endif %}" href="{{ url_for('stok_barang') }}">Stok Barang</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="mt-auto text-center">
+                    <button type="button" class="btn btn-danger w-75 logout-btn" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Konfirmasi Logout -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header border-0">
+                <h5 class="modal-title w-100" id="logoutModalLabel">
+                    <i class="bi bi-exclamation-circle text-warning" style="font-size: 4rem;"></i>
+                </h5>
+            </div>
+            <div class="modal-body">
+                <h4 class="mb-3">Logout?</h4>
+                <p class="text-muted">Apakah Anda yakin untuk Logout?</p>
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-center">
+                <button type="button" class="btn btn-danger w-25" data-bs-dismiss="modal">Batal</button>
+                <a href="{{ url_for('logout') }}" class="btn btn-primary w-25">Ya, Logout!</a>
+            </div>
+        </div>
+    </div>
+</div>
+    

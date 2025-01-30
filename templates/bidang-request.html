@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bidang | Permintaan</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #79a6df;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin-top: 20px;
+        }
+        .main-container {
+            margin-left: 270px;
+            max-width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .table-container {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            background-color: white;
+            padding: 15px;
+        }
+        .back-icon {
+            position: fixed;
+            top: 20px;
+            left: 100px;
+            font-size: 3rem;
+            color: black;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .back-icon:hover {
+            color: white;
+            border: 2px solid white;
+            transform: scale(1.1);
+        }
+        .logo-container {
+            position: fixed;
+            bottom: 20px;
+            left: 60px;
+            z-index: 100;
+        }
+        .logo-container img {
+            width: 100px;
+            height: auto;
+            border-radius: 10px;
+        }
+        .logo-container:hover {
+            transform: scale(1.1);
+        }
+        .btn-outline-custom-green {
+        color: #28a745;
+        border: 2px solid #28a745;
+        border-radius: 50px;
+        padding: 5px 15px;
+        font-size: 1rem;
+        font-weight: bold;
+        }
+
+        .btn-outline-custom-green:hover {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-outline-custom-red {
+            color: #dc3545;
+            border: 2px solid #dc3545;
+            border-radius: 50px;
+            padding: 5px 15px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .btn-outline-custom-red:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        footer a {
+            color: #5D9CEC;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-md-9 main-container">
+                <!-- Sidebar -->
+                <div class="col-md-3">
+                    {% include 'sidebar.html' %}
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1>Perencanaan Kebutuhan Barang dan Jasa</h1>
+                    <div class="user-info">
+                        <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 10px;"></i>
+                        <span>{{ roles }}</span>
+                    </div>
+                </div>
+                <hr>
+                <h2 class="text-start mt-4">{{ roles }}</h2>
+                <button class="btn btn-success btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#addModal">+ Tambah Produk</button>
+                <div class="table-container">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Nama Produk</th>
+                                <th>Deskripsi Produk</th>
+                                <th>Spesifikasi</th>
+                                <th>Kegiatan</th>
+                                <th>Kode Produksi</th>
+                                <th>Harga</th>
+                                <th>Jumlah</th>
+                                <th>Status</th>
+                                <th>Tanggal Respon</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if assets %}
+                                {% for asset in assets %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ asset.nama_produk }}</td>
+                                    <td class="text-wrap">{{ asset.deskripsi_produk }}</td>
+                                    <td>{{ asset.spesifikasi }}</td>
+                                    <td>{{ asset.kegiatan }}</td>
+                                    <td>{{ asset.kode_produksi }}</td>
+                                    <td>Rp {{ "{:,.0f}".format(asset.harga) }}</td>
+                                    <td>{{ asset.jumlah }}</td>
+                                    <td>
+                                        {% if asset.status == 'Diterima' %}
+                                            <button 
+                                                class="btn btn-outline-custom-green btn-sm" 
+                                                data-status="Diterima" 
+                                                data-pesan="{{ asset.pesan_status }}" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#statusModal">
+                                                Diterima
+                                            </button>
+                                        {% elif asset.status == 'Ditolak' %}
+                                            <button 
+                                                class="btn btn-outline-custom-red btn-sm" 
+                                                data-status="Ditolak" 
+                                                data-pesan="{{ asset.pesan_status }}" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#statusModal">
+                                                Ditolak
+                                            </button>
+                                        {% else %}
+                                            <span class="text-muted">Menunggu</span>
+                                        {% endif %}
+                                    </td>                                    
+                                    <td>{{ asset.tanggal_respon or 'Menunggu' }}</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+                                            <!-- Tombol Edit -->
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal{{ asset.id }}">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                        
+                                            <!-- Tombol Hapus -->
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ asset.id }}">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="11" class="text-center">Tidak ada produk</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                <footer class="text-center mt-5">
+                    <p>Copyright &copy; 2024 <a href="#">Peralatan dan Perlengkapan</a></p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Tambah -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">Stok Barang Baru</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('bidangrequest') }}" method="POST">
+                        <div class="mb-3">
+                            <label for="namaProduk" class="form-label">Nama Produk</label>
+                            <input type="text" class="form-control" id="namaProduk" name="nama_produk" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="deskripsiProduk" class="form-label">Deskripsi Produk</label>
+                            <textarea class="form-control" id="deskripsiProduk" name="deskripsi_produk" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="spesifikasi" class="form-label">Spesifikasi</label>
+                            <input type="text" class="form-control" id="spesifikasi" name="spesifikasi" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="kegiatan" class="form-label">Kegiatan</label>
+                            <input type="text" class="form-control" id="kegiatan" name="kegiatan" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="kodeProduksi" class="form-label">Kode Produk</label>
+                            <input type="text" class="form-control" id="kodeProduk" name="kode_produksi" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="harga" class="form-label">Harga</label>
+                            <input type="text" class="form-control" id="harga" name="harga" oninput="formatCurrency(this)" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jumlah" class="form-label">Jumlah</label>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Tambahkan Produk</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Edit -->
+    {% for asset in assets %}
+    <div class="modal fade" id="editModal{{ asset.id }}" tabindex="-1" aria-labelledby="editModalLabel{{ asset.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel{{ asset.id }}">Edit Produk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('update_produk', id=asset.id) }}" method="POST">
+                        <div class="mb-3">
+                            <label for="editNamaProduk{{ asset.id }}" class="form-label">Nama Produk</label>
+                            <input type="text" class="form-control" id="editNamaProduk{{ asset.id }}" name="nama_produk" value="{{ asset.nama_produk }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editDeskripsiProduk{{ asset.id }}" class="form-label">Deskripsi Produk</label>
+                            <textarea type="text" class="form-control" id="editDeskripsiProduk{{ asset.id }}" name="deskripsi_produk" required>{{ asset.deskripsi_produk }}></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editSpesifikasi{{ asset.id }}" class="form-label">Spesifikasi</label>
+                            <input type="text" class="form-control" id="editSpesifikasi{{ asset.id }}" name="spesifikasi" value="{{ asset.spesifikasi }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editKegiatan{{ asset.id }}" class="form-label">Kegiatan</label>
+                            <input type="text" class="form-control" id="editKegiatan{{ asset.id }}" name="kegiatan" value="{{ asset.kegiatan }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editKodeProduksi{{ asset.id }}" class="form-label">Kode Produksi</label>
+                            <input type="text" class="form-control" id="editKodeProduksi{{ asset.id }}" name="kode_produksi" value="{{ asset.kode_produksi }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editHarga{{ asset.id }}" class="form-label">Harga</label>
+                            <input type="text" class="form-control" id="editHarga{{ asset.id }}" name="harga" value="{{ "{:,.0f}".format(asset.harga) }}" oninput="formatCurrency(this)" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editJumlah{{ asset.id }}" class="form-label">Jumlah</label>
+                            <input type="number" class="form-control" id="editJumlah{{ asset.id }}" name="jumlah" value="{{ asset.jumlah }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Modal Hapus -->
+    {% for asset in assets %}
+    <div class="modal fade" id="deleteModal{{ asset.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ asset.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ asset.id }}">Hapus Data?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Apakah Anda yakin ingin menghapus produk <strong>{{ asset.nama_produk }}</strong>?
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ url_for('delete_produk', id=asset.id) }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Hapus</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Modal Pesan -->
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id="statusHeader" class="modal-header">
+                    <h5 class="modal-title" id="statusModalLabel">Status</h5>
+                </div>
+                <div id="statusBody" class="modal-body">
+                    Pesan status akan muncul di sini.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const statusModal = document.getElementById('statusModal');
+
+            // Reset modal saat ditutup
+            statusModal.addEventListener('hidden.bs.modal', () => {
+                // Bersihkan class dan konten modal
+                const modalHeader = document.getElementById('statusHeader');
+                const modalBody = document.getElementById('statusBody');
+                modalHeader.className = 'modal-header'; // Reset ke default
+                modalBody.textContent = ''; // Kosongkan konten body
+            });
+
+            // Tambahkan listener untuk tombol status
+            const statusButtons = document.querySelectorAll('td button[data-status]');
+            statusButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const status = button.getAttribute('data-status').trim();
+                    const pesan = button.getAttribute('data-pesan') || '';
+                    const modalHeader = document.getElementById('statusHeader');
+                    const modalBody = document.getElementById('statusBody');
+
+                    // Ubah header dan body modal berdasarkan status
+                    if (status === 'Ditolak') {
+                        modalHeader.className = 'modal-header bg-danger text-white';
+                        modalBody.textContent = pesan || 'Permintaan ini telah ditolak.';
+                    } else if (status === 'Diterima') {
+                        modalHeader.className = 'modal-header bg-success text-white';
+                        modalBody.textContent = pesan || 'Permintaan ini telah diterima.';
+                    }
+
+                    // Tampilkan modal
+                    const bootstrapModal = new bootstrap.Modal(statusModal);
+                    bootstrapModal.show();
+                });
+            });
+        });
+    </script>
+    <script>
+        document.addEventListener('hidden.bs.modal', () => {
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+        });
+    </script>
+    <script>
+            document.addEventListener('DOMContentLoaded', () => {
+            const statusModal = document.getElementById('statusModal');
+
+            // Event untuk modal yang ditutup
+            statusModal.addEventListener('hidden.bs.modal', () => {
+                // Hapus class 'modal-open' dari body
+                document.body.classList.remove('modal-open');
+                // Hapus backdrop modal yang mungkin masih ada
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(backdrop => backdrop.remove());
+                // Reset scroll bar
+                document.body.style.paddingRight = '';
+            });
+        });
+    </script>
+    <script>
+        function formatCurrency(input) {
+            // Hapus semua karakter non-digit
+            let value = input.value.replace(/,/g, '').replace(/[^\d]/g, '');
+            // Format angka dengan pemisah ribuan
+            input.value = new Intl.NumberFormat('en-US').format(value);
+        }
+    </script>
+    
+</body>
+</html>

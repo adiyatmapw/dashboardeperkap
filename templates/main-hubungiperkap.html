@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hubungi Perkap | Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #79a6df;
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin-top: 20px;
+        }
+        .main-container {
+            margin-left: 270px;
+            max-width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .icon-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .icon-container .icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .icon-container .icon:hover {
+            transform: scale(1.1);
+            color: #0056b3; /* Warna biru */
+        }
+        .icon-container .border {
+            transition: all 0.3s ease;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .icon-container .border:hover {
+            transform: scale(1.05);
+            border-color: #0056b3; /* Warna biru untuk efek hover */
+            background-color: #f1f9ff; /* Warna latar saat hover */
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        footer a {
+            color: #5D9CEC;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3">
+                {% include 'sidebar.html' %}
+            </div>
+            <!-- Main Content -->
+            <div class="col-md-9 main-container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2>Apakah ada kendala dalam penggunaan aplikasi?</h2>
+                    <div class="user-info">
+                        <i class="bi bi-person-circle" style="font-size: 2rem; margin-right: 10px;"></i>
+                        <span>{{ roles }}</span>
+                    </div>
+                </div>
+                <hr>
+                <p class="fw-bold text-primary">Jika ada kendala silakan hubungi Subbag Peralatan dan Perlengkapan.</p>
+                <div class="row icon-container">
+                    <div class="col-md-6">
+                        <btn class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#kirimaduanModal">
+                            <div class="border rounded p-3 shadow-sm">
+                                <i class="bi bi-chat-left-dots icon"></i>
+                                <p class="fw-bold">Kirim Aduan</p>
+                            </div>
+                        </btn>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{ url_for('daftar_aduan') }}" class="text-decoration-none">
+                            <div class="border rounded p-3 shadow-sm">
+                                <i class="bi bi-folder icon"></i>
+                                <p class="fw-bold">Daftar Aduan Anda</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <footer class="text-center mt-5">
+                    <p>Copyright &copy; 2024 <a href="#">Peralatan dan Perlengkapan</a></p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+        <!-- Modal Tambah -->
+        <div class="modal fade" id="kirimaduanModal" tabindex="-1" aria-labelledby="kirimaduanModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="kirimaduanModalLabel">Aduan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ url_for('kirim_aduan') }}" method="POST">
+                            <div class="mb-3">
+                                <label for="aduanDari" class="form-label">Dari</label>
+                                <input type="text" class="form-control" id="aduanDari" name="nama_bidang" value="{{ roles }}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="perihalAduan" class="form-label">Perihal</label>
+                                <input type="text" class="form-control" id="perihalAduan" name="perihal" placeholder="Perihal Aduan" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="keluhan" class="form-label">Masukkan Keluhan Anda</label>
+                                <textarea class="form-control" id="keluhan" name="deskripsi" rows="3" placeholder="Masukkan keluhan Anda" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Kirim Aduan</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

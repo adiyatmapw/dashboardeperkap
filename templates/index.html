@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page | Selamat Datang! </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('/static/images/bglogin.png') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            height: 100vh;
+            align-items: center;
+            padding-top: 5%;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
+            z-index: -1;
+        }
+
+        .login-container {
+            z-index: 1;
+            background-color: rgba(70, 130, 180, 0.35); /* Opacity 35% */
+            border-radius: 15px;
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .form-control {
+            border-radius: 50px;
+        }
+
+        .form-control::placeholder {
+            color: #bbb;
+        }
+
+        .form-control:focus {
+            border-color: #009688;
+            box-shadow: 0 0 5px rgba(0, 150, 136, 0.5);
+        }
+
+        .btn-login {
+            background-color: #28a745;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+
+        .btn-login:hover {
+            background-color: #218838;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="text-center text-white col-12">
+                <img src="/static/images/logoperusahaan.png" alt="Logo Perusahaan" class="logo">
+            </div>
+            <div class="text-center text-white col-12">
+                <h1 class="mt-12">SUBBAG PERALATAN DAN PERLENGKAPAN</h1>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+            <div class="login-container col-12 mx-auto">
+                <h4 class="mb-3 text-white">Halo!</h4>
+                <p class="text-white">Silahkan masukkan username dan password</p>
+                <form action="/" method="POST">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-white border-0">
+                            <i class="bi bi-envelope-fill text-secondary"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Username" name="username" required>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-white border-0">
+                            <i class="bi bi-lock-fill text-secondary"></i>
+                        </span>
+                        <input type="password" class="form-control" placeholder="Password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-login btn-block w-100 text-white">Login</button>
+                </form>
+                {% if error %}
+                <p class="text-danger text-center">{{ error }}</p>
+                {% endif %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
